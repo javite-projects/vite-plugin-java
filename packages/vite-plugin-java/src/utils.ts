@@ -6,6 +6,7 @@ import type { AddressInfo } from 'node:net'
 import debug from 'debug'
 import { globSync } from 'glob'
 import 'dotenv/config'
+import { merge } from 'smob'
 
 export const PLUGIN_NAME = 'vite-plugin-java'
 const filter = process.env.VITE_DEBUG_FILTER
@@ -32,45 +33,71 @@ export function createDebugger(
 }
 
 /**
- * Creates a Rollup input configuration object based on the specified pattern and base directory.
+ * Creates the Rollup input configuration object.
  *
- * @param pattern - The file pattern to match for input files. Defaults to src/~/main.ts
- * @param baseDir - The base directory for the input files. Defaults to 'src'.
+ * @param pattern - The glob pattern to match the entry files.
+ * @param baseDir - The base directory for the entry files.
+ * @param options - Additional options for the glob pattern matching.
  * @returns The Rollup input configuration object.
  */
 export function createRollupInputConfig(
   pattern: string | string[] = 'src/**/main.ts',
   baseDir = 'src',
+  options: Parameters<typeof globSync>[1] = {},
 ): { [entryAlias: string]: string } {
+  const cwd = process.cwd()
+  const globOptions = merge(options, { cwd })
+
   return Object.fromEntries(
-    globSync(pattern).map((file) => {
+    globSync(pattern, globOptions).map((file) => {
+      const filepath: string = typeof file === 'string' ? file : file.path
+      const absolutePath = path.resolve(cwd, filepath)
+
       return [
-        path.relative(baseDir, path.basename(file, path.extname(file))),
-        fileURLToPath(new URL(file, import.meta.url)),
+        path.relative(baseDir, filepath.slice(0, filepath.length - path.extname(filepath).length)),
+        absolutePath,
       ]
     }),
   )
 }
 
+/**
+ * Checks if the given address is an IPv6 address.
+ *
+ * @param address - The address to check.
+ * @returns True if the address is an IPv6 address, false otherwise.
+ */
 export function isIpv6(address: AddressInfo): boolean {
   return address.family === 'IPv6'
-  // In node >=18.0 <18.4 this was an integer value. This was changed in a minor version.
-  // See: https://github.com/laravel/vite-plugin/issues/103
-  // @ts-expect-error-next-line
+    // In node >=18.0 <18.4 this was an integer value. This was changed in a minor version.
+    // See: https://github.com/laravel/vite-plugin/issues/103
+    // @ts-expect-error-next-line
     || address.family === 6
 }
 
 /**
- * The directory of the current file.
+ * Returns the directory of the current file.
+ *
+ * @returns The directory of the current file.
  */
 export function dirname(): string {
   return fileURLToPath(new URL('.', import.meta.url))
 }
 
+/**
+ * Checks if the current project is a Maven project.
+ *
+ * @returns True if the current project is a Maven project, false otherwise.
+ */
 export function isMavenProject(): boolean {
   return fs.existsSync(path.join(process.cwd(), 'pom.xml'))
 }
 
+/**
+ * Checks if the current project is a Gradle project.
+ *
+ * @returns True if the current project is a Gradle project, false otherwise.
+ */
 export function isGradleProject(): boolean {
   return fs.existsSync(path.join(process.cwd(), 'build.gradle'))
 }

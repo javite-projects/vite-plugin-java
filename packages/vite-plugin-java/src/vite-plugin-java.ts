@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import type { Buffer } from 'node:buffer'
 import type { AddressInfo } from 'node:net'
 import path from 'node:path'
-import type { Plugin, ResolvedConfig, UserConfig } from 'vite'
+import type { ConfigEnv, Plugin, ResolvedConfig, UserConfig } from 'vite'
 import { loadEnv } from 'vite'
 import { merge } from 'smob'
 import colors from 'picocolors'
@@ -15,12 +15,16 @@ const debug = createDebugger(`${PLUGIN_NAME}`)
 
 let exitHandlersBound = false
 
+interface JavaPlugin extends Plugin {
+  config: (config: UserConfig, env: ConfigEnv) => UserConfig
+}
+
 /**
  * Java plugin for Vite.
  *
  * @param config - A config object or relative path(s) of the scripts to be compiled.
  */
-export function java(config: string | string[] | VitePluginJavaConfig): Plugin[] {
+export function java(config: string | string[] | VitePluginJavaConfig): [JavaPlugin, ...Plugin[]] {
   debug?.(`${PLUGIN_NAME} plugin initialized.`)
   debug?.('config, %O', config)
   const pluginConfig = resolvePluginConfig(config)
@@ -32,7 +36,7 @@ export function java(config: string | string[] | VitePluginJavaConfig): Plugin[]
 /**
  * Resolve the Java plugin configuration.
  */
-function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): Plugin[] {
+function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaPlugin, ...Plugin[]] {
   debug?.('start resolving plugins.')
   let viteDevServerUrl: DevServerUrl
   let resolvedConfig: ResolvedConfig
@@ -41,7 +45,7 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): Plugin
   const defaultAliases: Record<string, string> = {
     '@': '/src',
   }
-  const plugins: Plugin[] = [
+  const plugins: [JavaPlugin, ...Plugin[]] = [
     {
       name: PLUGIN_NAME,
       enforce: 'post',
@@ -55,7 +59,7 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): Plugin
           : undefined
 
         return {
-          base: userConfig.base ?? (mode === 'build' ? resolveBase(pluginConfig, assetUrl) : ''),
+          base: userConfig.base ?? (command === 'build' ? resolveBase(pluginConfig, assetUrl) : ''),
           publicDir: userConfig.publicDir ?? pluginConfig.publicDirectory ?? false,
           build: {
             manifest: userConfig.build?.manifest ?? 'manifest.json',
