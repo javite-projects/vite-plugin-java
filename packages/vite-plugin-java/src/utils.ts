@@ -43,10 +43,12 @@ export function createRollupInputConfig(
   baseDir = 'src',
 ): { [entryAlias: string]: string } {
   return Object.fromEntries(
-    globSync(pattern).map(file => [
-      path.relative(baseDir, file) + path.basename(file, path.extname(file)),
-      fileURLToPath(new URL(file, import.meta.url)),
-    ]),
+    globSync(pattern).map((file) => {
+      return [
+        path.relative(baseDir, path.basename(file, path.extname(file))),
+        fileURLToPath(new URL(file, import.meta.url)),
+      ]
+    }),
   )
 }
 
