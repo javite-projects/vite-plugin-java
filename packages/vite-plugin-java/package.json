@@ -22,7 +22,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && npm run lint && npm run build:tsup && cp src/dev-server-index.html dist/",
+    "build": "rimraf dist && npm run lint && npm run build:tsup && copy-file src/dev-server-index.html --folder dist/",
     "build:tsup": "tsup --format esm,cjs --clean --dts",
     "lint": "eslint .",
     "test": "vitest"
@@ -40,6 +40,7 @@
     "@rollup/plugin-swc": "^0.3.0",
     "@swc/core": "^1.5.24",
     "@types/debug": "^4.1.12",
+    "copy-file-util": "^1.2.1",
     "debug": "^4.3.5",
     "dotenv": "^16.4.5",
     "glob": "^10.4.1",
