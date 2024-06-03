@@ -84,7 +84,7 @@ describe('vite-plugin-java', () => {
 
     const config = plugin.config(userConfig, { command: 'build', mode: 'production' })
 
-    expect(config.build?.manifest).toBe('manifest.json')
+    expect(config.build?.manifest).toBe('.vite/manifest.json')
   })
 
   it('respects users base config option', () => {

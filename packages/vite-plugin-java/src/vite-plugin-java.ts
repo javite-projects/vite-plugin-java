@@ -62,7 +62,7 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
           base: userConfig.base ?? (command === 'build' ? resolveBase(pluginConfig, assetUrl) : ''),
           publicDir: userConfig.publicDir ?? pluginConfig.publicDirectory ?? false,
           build: {
-            manifest: userConfig.build?.manifest ?? 'manifest.json',
+            manifest: userConfig.build?.manifest ?? '.vite/manifest.json',
             outDir: userConfig.build?.outDir ?? pluginConfig.outputDirectory,
             rollupOptions: {
               input: userConfig.build?.rollupOptions?.input ?? pluginConfig.input,
@@ -72,7 +72,7 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
           },
           server: {
             origin: userConfig.server?.origin ?? '__java_vite_placeholder__',
-            host: userConfig.server?.host ?? '0.0.0.0',
+            host: userConfig.server?.host ?? 'localhost',
             port: userConfig.server?.port ?? (env.VITE_PORT ? Number.parseInt(env.VITE_PORT) : 5173),
             strictPort: userConfig.server?.strictPort ?? true,
             ...(serverConfig
