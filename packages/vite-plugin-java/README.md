@@ -54,8 +54,8 @@ export default defineConfig({
 | `publicDirectory`  | `string`                                      | `'public'`      | Directory for public assets                                |
 | `buildDirectory`   | `string`                                      | `'build'`       | Subdirectory where compiled assets should be written       |
 | `outputDirectory`  | `string`                                      | `'dist'`        | Directory where the bundle should be written               |
-| `tsCompiler`       | `'esbuild'` \| `'swc'`                        | `'esbuild'`     | TypeScript compiler to use                                 |
-| `swcOptions`       | `SwcOptions`                                  | `{}`            | Options to pass to the SWC compiler                        |
+| `tsCompiler`       | `'esbuild'` \| `'swc'`                        | `'esbuild'`     | @experimental TypeScript compiler to use                                 |
+| `swcOptions`       | `SwcOptions`                                  | `{}`            | @experimental Options to pass to the SWC compiler                        |
 | `hotFile`          | `string`                                      | `'public/hot'`  | Path to the "hot" file                                     |
 | `transformOnServe` | `(code: string, url: DevServerUrl) => string` | `code => code`  | Transform the code while serving                           |
 

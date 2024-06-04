@@ -33,12 +33,15 @@ export interface VitePluginJavaConfig {
   /**
    * The typescript compiler to use.
    *
+   * @experimental
    * @default 'esbuild'
    */
   tsCompiler?: SupportedTSCompiler
 
   /**
    * The options to pass to the SWC compiler.
+   *
+   * @experimental
    */
   swcOptions?: SwcOptions
 

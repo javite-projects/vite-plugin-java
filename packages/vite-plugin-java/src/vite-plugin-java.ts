@@ -97,7 +97,7 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
                     replacement: defaultAliases[alias],
                   })),
                 ]
-              : merge(defaultAliases, userConfig.resolve?.alias ?? {}),
+              : merge({}, userConfig.resolve?.alias || {}, defaultAliases),
           },
           optimizeDeps: {
             exclude: [
@@ -174,8 +174,9 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
 
   if (pluginConfig.tsCompiler === 'swc') {
     debug?.('adding SWC plugin.')
+    const { exclude, ...swcOptions } = pluginConfig.swcOptions
 
-    plugins.push(swc(pluginConfig.swcOptions))
+    plugins.push(swc({ exclude, swc: swcOptions }))
   }
 
   debug?.('plugins resolved.')
