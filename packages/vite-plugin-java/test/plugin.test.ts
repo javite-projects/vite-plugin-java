@@ -1,5 +1,5 @@
-import java, { PLUGIN_NAME } from 'src'
 import { afterEach, describe, expect, it } from 'vitest'
+import java, { PLUGIN_NAME } from '../src/index'
 
 describe('vite-plugin-java', () => {
   afterEach(() => {})

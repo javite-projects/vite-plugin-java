@@ -4,7 +4,9 @@
   "packageManager": "pnpm@9.1.4",
   "scripts": {
     "release": "bumpp",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
     "vite": "^5.0.0"
