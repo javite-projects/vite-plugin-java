@@ -22,7 +22,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && npm run lint && npm run build:tsup && copy-file src/dev-server-index.html --folder dist/",
+    "build": "rimraf dist && npm run lint && npm run build:tsup && npm run build:dev-page",
+    "build:dev-page": "node scripts/build-dev-page.js",
     "build:tsup": "tsup --format esm,cjs --clean --dts",
     "lint": "eslint .",
     "test": "vitest"
