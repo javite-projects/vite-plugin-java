@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import type { AddressInfo } from 'node:net'
 import debug from 'debug'
+import type { GlobOptions } from 'glob'
 import { globSync } from 'glob'
 import 'dotenv/config'
 import { merge } from 'smob'
@@ -100,4 +101,27 @@ export function isMavenProject(): boolean {
  */
 export function isGradleProject(): boolean {
   return fs.existsSync(path.join(process.cwd(), 'build.gradle'))
+}
+
+/**
+ * Reads the properties from the project files.
+ *
+ * @returns A map containing the key-value pairs of the properties.
+ */
+export function readPropertiesFile(pattern?: string | string[], options?: GlobOptions): Map<string, string> {
+  const properties: Map<string, string> = new Map()
+  const _pattern = pattern || '**/*.properties'
+  const _options = merge({}, options || {}, { cwd: process.cwd() })
+
+  globSync(_pattern, _options).forEach((file) => {
+    const _file = typeof file === 'string' ? file : file.path
+    const content = fs.readFileSync(_file, 'utf-8')
+    content.split('\n').filter(c => !c?.trim().startsWith('#')).forEach((line) => {
+      const [key, value] = line.split('=')
+      if (key)
+        properties.set(key?.trim(), value?.trim())
+    })
+  })
+
+  return properties
 }

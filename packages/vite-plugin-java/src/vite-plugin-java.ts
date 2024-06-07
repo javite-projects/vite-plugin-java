@@ -8,7 +8,7 @@ import { loadEnv } from 'vite'
 import { merge } from 'smob'
 import colors from 'picocolors'
 import swc from '@rollup/plugin-swc'
-import { PLUGIN_NAME, createDebugger, dirname, isGradleProject, isIpv6, isMavenProject } from './utils'
+import { PLUGIN_NAME, createDebugger, dirname, isGradleProject, isIpv6, isMavenProject, readPropertiesFile } from './utils'
 import type { DevServerUrl, VitePluginJavaConfig } from '.'
 
 const debug = createDebugger(`${PLUGIN_NAME}`)
@@ -120,8 +120,10 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
         }
       },
       configureServer(server) {
+        // TODO: Add support for reading yaml files.
         const envDir = resolvedConfig.envDir || process.cwd()
-        const appUrl = loadEnv(resolvedConfig.mode, envDir, 'APP_URL').APP_URL ?? 'undefined'
+        const properties = readPropertiesFile()
+        const appUrl = loadEnv(resolvedConfig.mode, envDir, 'APP_URL').APP_URL ?? properties.get('app.url') ?? 'undefined'
 
         server.httpServer?.once('listening', () => {
           debug?.('server listening.')
@@ -136,7 +138,10 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
             setTimeout(() => {
               server.config.logger.info(`\n  ${colors.red(`${colors.bold('JAVA')} ${javaVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
               server.config.logger.info('')
-              server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('APP_URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
+
+              if (appUrl !== 'undefined') {
+                server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('APP_URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
+              }
             }, 100)
           }
         })
@@ -314,7 +319,7 @@ function resolveEnvironmentServerConfig(env: Record<string, string>): {
  */
 function resolveHostFromEnv(env: Record<string, string>): string | undefined {
   try {
-    return new URL(env.APP_URL).host
+    return new URL(env.APP_URL || readPropertiesFile().get('app.url') || '').host
   }
   catch {
 

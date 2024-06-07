@@ -60,6 +60,6 @@ export interface VitePluginJavaConfig {
 
 export type DevServerUrl = `${'http' | 'https'}://${string}:${number}`
 
-export { PLUGIN_NAME, createRollupInputConfig } from './utils'
+export { PLUGIN_NAME, createRollupInputConfig, readPropertiesFile } from './utils'
 export { java }
 export default java

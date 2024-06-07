@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { createRollupInputConfig } from '../src/utils'
+import { createRollupInputConfig, readPropertiesFile } from '../src/utils'
 
 const files = [
   'src/main.ts',
@@ -47,5 +47,23 @@ describe('vite-plugin-java - utils', () => {
       main: getAbsolutePath('src/main.ts'),
       [path.normalize('nested/main')]: getAbsolutePath('src/nested/main.ts'),
     })
+  })
+
+  it('should read properties and return mapped entries', () => {
+    const expectedProperties = new Map(
+      [
+        ['app.url', 'http://localhost:8080'],
+        ['app.name', 'Vite Java App'],
+      ],
+    )
+    let content = ''
+
+    for (const [key, value] of expectedProperties.entries()) {
+      content += `${key}=${value}\n`
+    }
+    fs.writeFileSync('fixtures/application.properties', content)
+
+    const propertiesMap = readPropertiesFile()
+    expect(propertiesMap).toEqual(expectedProperties)
   })
 })

@@ -25,3 +25,7 @@ dist-ssr
 
 # Plugin hot file
 hot
+
+# Java
+target/
+build/
