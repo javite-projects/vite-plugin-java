@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.1.4",
   "scripts": {
-    "release": "bumpp",
+    "release": "pnpm test && bumpp -r && pnpm publish -r",
     "lint": "eslint .",
     "test": "vitest",
     "type-check": "tsc --noEmit"
