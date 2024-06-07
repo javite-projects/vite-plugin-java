@@ -13,6 +13,6 @@
     "serve": "vite preview"
   },
   "devDependencies": {
-    "vite-plugin-java": "link:../../packages/vite-plugin-java"
+    "vite-plugin-java": "workspace:*"
   }
 }

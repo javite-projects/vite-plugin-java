@@ -58,7 +58,7 @@ describe('vite-plugin-java', () => {
 
     const config = plugin.config({}, { command: 'build', mode: 'production' })
     expect(config.base).toBe('/other-build/')
-    expect(config.build?.manifest).toBe('manifest.json')
+    expect(config.build?.manifest).toBe('.vite/manifest.json')
     expect(config.build?.outDir).toBe('other-output')
     expect(config.build?.rollupOptions?.input).toBe('resources/js/app.ts')
   })
