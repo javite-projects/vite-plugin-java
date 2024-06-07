@@ -1,9 +1,6 @@
 # Vite Plugin for Java (Spring MVC)
 
-<a href="https://github.com/benny123tw/vite-plugin-java/actions"><img src="https://github.com/your-repo/vite-plugin-java/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://www.npmjs.com/package/vite-plugin-java"><img src="https://img.shields.io/npm/dt/vite-plugin-java" alt="Total Downloads"></a>
-<a href="https://www.npmjs.com/package/vite-plugin-java"><img src="https://img.shields.io/npm/v/vite-plugin-java" alt="Latest Stable Version"></a>
-<a href="https://www.npmjs.com/package/vite-plugin-java"><img src="https://img.shields.io/npm/l/vite-plugin-java" alt="License"></a>
+<a href="https://github.com/benny123tw/vite-plugin-java/actions"><img src="https://github.com/benny123tw/vite-plugin-java/actions/workflows/ci.yml/badge.svg" alt="Build Status"></a>
 
 ## Introduction
 
