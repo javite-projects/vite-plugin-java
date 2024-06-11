@@ -1,0 +1,10 @@
+description = "This is a test project for vite-plugin-java"
+
+plugin {
+  id 'java'
+}
+
+Java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}

@@ -53,6 +53,11 @@ export interface VitePluginJavaConfig {
   hotFile?: string
 
   /**
+   * The path to the Java project root.
+   */
+  javaProjectBase?: string
+
+  /**
    * Transform the code while serving.
    */
   transformOnServe?: (code: string, url: DevServerUrl) => string

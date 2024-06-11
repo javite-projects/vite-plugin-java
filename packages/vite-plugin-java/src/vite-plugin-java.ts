@@ -8,7 +8,7 @@ import { loadEnv } from 'vite'
 import { merge } from 'smob'
 import colors from 'picocolors'
 import swc from '@rollup/plugin-swc'
-import { PLUGIN_NAME, createDebugger, dirname, isGradleProject, isIpv6, isMavenProject, readPropertiesFile } from './utils'
+import { PLUGIN_NAME, createDebugger, dirname, isIpv6, javaVersion, pluginVersion, readPropertiesFile } from './utils'
 import type { DevServerUrl, VitePluginJavaConfig } from '.'
 
 const debug = createDebugger(`${PLUGIN_NAME}`)
@@ -136,7 +136,7 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
             fs.writeFileSync(pluginConfig.hotFile, `${viteDevServerUrl}${server.config.base.replace(/\/$/, '')}`)
 
             setTimeout(() => {
-              server.config.logger.info(`\n  ${colors.red(`${colors.bold('JAVA')} ${javaVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
+              server.config.logger.info(`\n  ${colors.red(`${colors.bold('JAVA')} ${javaVersion(pluginConfig.javaProjectBase)}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
               server.config.logger.info('')
 
               if (appUrl !== 'undefined') {
@@ -188,42 +188,6 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
   return plugins
 }
 
-/**
- * The version of Java being run.
- */
-function javaVersion(): string {
-  try {
-    let version: string | undefined
-
-    if (isMavenProject()) {
-      const pom = fs.readFileSync('pom.xml').toString()
-      version = pom.match(/<java.version>(.*)<\/java.version>/)?.[1]
-    }
-
-    if (isGradleProject()) {
-      const gradle = fs.readFileSync('build.gradle').toString()
-      version = gradle.match(/sourceCompatibility = '(.*)'/)?.[1]
-    }
-
-    return version || ''
-  }
-  catch {
-    return ''
-  }
-}
-
-/**
- * The version of the Vite plugin Java being run.
- */
-function pluginVersion(): string {
-  try {
-    return JSON.parse(fs.readFileSync(path.join(dirname(), '../package.json')).toString())?.version
-  }
-  catch {
-    return ''
-  }
-}
-
 function resolvePluginConfig(config: string | string[] | VitePluginJavaConfig): Required<VitePluginJavaConfig> {
   if (typeof config === 'undefined') {
     throw new PluginError(`missing configuration.`)
@@ -265,6 +229,7 @@ function resolvePluginConfig(config: string | string[] | VitePluginJavaConfig): 
     tsCompiler: config.tsCompiler ?? 'esbuild',
     swcOptions: config.swcOptions ?? {},
     hotFile: config.hotFile ?? path.join((config.publicDirectory ?? 'public'), 'hot'),
+    javaProjectBase: config.javaProjectBase ?? '.',
     transformOnServe: config.transformOnServe ?? (code => code),
   }
 }

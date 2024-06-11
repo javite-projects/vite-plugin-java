@@ -90,8 +90,8 @@ export function dirname(): string {
  *
  * @returns True if the current project is a Maven project, false otherwise.
  */
-export function isMavenProject(): boolean {
-  return fs.existsSync(path.join(process.cwd(), 'pom.xml'))
+export function isMavenProject(projectRoot: string = ''): boolean {
+  return fs.existsSync(path.join(projectRoot || process.cwd(), 'pom.xml'))
 }
 
 /**
@@ -99,8 +99,16 @@ export function isMavenProject(): boolean {
  *
  * @returns True if the current project is a Gradle project, false otherwise.
  */
-export function isGradleProject(): boolean {
-  return fs.existsSync(path.join(process.cwd(), 'build.gradle'))
+export function isGradleProject(projectRoot: string = ''): boolean {
+  return fs.existsSync(path.join(projectRoot || process.cwd(), 'build.gradle'))
+}
+
+/**
+ * Checks if the current project is a Kotlin DSL project.
+ * @returns True if the current project is a Kotlin DSL project, false otherwise.
+ */
+export function isKotlinDSLProject(projectRoot: string = ''): boolean {
+  return fs.existsSync(path.join(projectRoot || process.cwd(), 'build.gradle.kts'))
 }
 
 /**
@@ -124,4 +132,55 @@ export function readPropertiesFile(pattern?: string | string[], options?: GlobOp
   })
 
   return properties
+}
+
+/**
+ * The version of Java being run.
+ *
+ * @param projectRoot - The root directory of the Java project.
+ */
+export function javaVersion(projectRoot: string = '.'): string {
+  try {
+    let version: string | undefined
+
+    if (isMavenProject(projectRoot)) {
+      const pom = fs.readFileSync(path.join(projectRoot, 'pom.xml')).toString()
+      version = pom.match(/<java.version>(.*)<\/java.version>/)?.[1]
+    }
+
+    if (isGradleProject(projectRoot)) {
+      const gradle = fs.readFileSync(path.join(projectRoot, 'build.gradle')).toString()
+      version = gradle.match(/sourceCompatibility\s*=\s*['"]?(\d+(\.\d+)?)['"]?/i)?.[1]
+
+      if (!version) {
+        version = gradle.match(/sourceCompatibility\s*=\s*JavaVersion\.VERSION_(\d+(_\d+)?)/i)?.[1]?.replace('_', '.')
+      }
+    }
+
+    if (isKotlinDSLProject(projectRoot)) {
+      const gradleKts = fs.readFileSync(path.join(projectRoot, 'build.gradle.kts')).toString()
+      version = gradleKts.match(/sourceCompatibility\s*=\s*JavaVersion\.VERSION_(\d+(_\d+)?)/i)?.[1]?.replace('_', '.')
+
+      if (!version) {
+        version = gradleKts.match(/java\.sourceCompatibility\s*=\s*JavaVersion\.VERSION_(\d+(_\d+)?)/i)?.[1]?.replace('_', '.')
+      }
+    }
+
+    return version || ''
+  }
+  catch {
+    return ''
+  }
+}
+
+/**
+ * The version of the Vite plugin Java being run.
+ */
+export function pluginVersion(): string {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(dirname(), '../package.json')).toString())?.version
+  }
+  catch {
+    return ''
+  }
 }
