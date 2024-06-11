@@ -1,7 +1,4 @@
-import type { Options as SwcOptions } from '@swc/core'
 import { java } from './vite-plugin-java'
-
-export type SupportedTSCompiler = 'esbuild' | 'swc'
 
 export interface VitePluginJavaConfig {
   /**
@@ -29,21 +26,6 @@ export interface VitePluginJavaConfig {
    * @default 'dist'
    */
   outputDirectory?: string
-
-  /**
-   * The typescript compiler to use.
-   *
-   * @experimental
-   * @default 'esbuild'
-   */
-  tsCompiler?: SupportedTSCompiler
-
-  /**
-   * The options to pass to the SWC compiler.
-   *
-   * @experimental
-   */
-  swcOptions?: SwcOptions
 
   /**
    * The path to the "hot" file.

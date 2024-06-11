@@ -7,7 +7,6 @@ import type { ConfigEnv, Plugin, ResolvedConfig, UserConfig } from 'vite'
 import { loadEnv } from 'vite'
 import { merge } from 'smob'
 import colors from 'picocolors'
-import swc from '@rollup/plugin-swc'
 import { PLUGIN_NAME, createDebugger, dirname, isIpv6, javaVersion, pluginVersion, readPropertiesFile } from './utils'
 import type { DevServerUrl, VitePluginJavaConfig } from '.'
 
@@ -99,12 +98,6 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
                 ]
               : merge({}, userConfig.resolve?.alias || {}, defaultAliases),
           },
-          optimizeDeps: {
-            exclude: [
-              '@swc/core',
-            ],
-          },
-          esbuild: pluginConfig.tsCompiler === 'swc' ? false : userConfig.esbuild,
         }
       },
       configResolved(config) {
@@ -177,13 +170,6 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
     },
   ]
 
-  if (pluginConfig.tsCompiler === 'swc') {
-    debug?.('adding SWC plugin.')
-    const { exclude, ...swcOptions } = pluginConfig.swcOptions
-
-    plugins.push(swc({ exclude, swc: swcOptions }))
-  }
-
   debug?.('plugins resolved.')
   return plugins
 }
@@ -226,8 +212,6 @@ function resolvePluginConfig(config: string | string[] | VitePluginJavaConfig): 
     buildDirectory: config.buildDirectory ?? 'build',
     publicDirectory: config.publicDirectory ?? 'public',
     outputDirectory: config.outputDirectory ?? 'dist',
-    tsCompiler: config.tsCompiler ?? 'esbuild',
-    swcOptions: config.swcOptions ?? {},
     hotFile: config.hotFile ?? path.join((config.publicDirectory ?? 'public'), 'hot'),
     javaProjectBase: config.javaProjectBase ?? '.',
     transformOnServe: config.transformOnServe ?? (code => code),
