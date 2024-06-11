@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-java",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1-beta.1",
   "description": "A Vite plugin for Java",
   "author": "Benny Yen <benny123tw@gmail.com>",
   "license": "MIT",
