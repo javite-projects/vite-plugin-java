@@ -28,13 +28,6 @@ export interface VitePluginJavaConfig {
   outputDirectory?: string
 
   /**
-   * The path to the "hot" file.
-   *
-   * @default `${publicDirectory}/hot`
-   */
-  hotFile?: string
-
-  /**
    * The path to the Java project root.
    */
   javaProjectBase?: string

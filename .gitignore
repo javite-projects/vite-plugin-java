@@ -23,9 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Plugin hot file
-hot
-
 # Java
 target/
 build/
