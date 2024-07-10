@@ -72,16 +72,6 @@ export default {
       publicDirectory: 'static',
       buildDirectory: 'assets',
       outputDirectory: 'build',
-      tsCompiler: 'swc',
-      swcOptions: {
-        jsc: {
-          parser: {
-            syntax: 'typescript',
-            tsx: true
-          },
-          target: 'es2015'
-        }
-      },
       transformOnServe: (code, url) => code.replace('__VITE_URL__', url)
     })
   ]
