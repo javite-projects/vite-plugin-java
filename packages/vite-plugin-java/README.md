@@ -39,6 +39,7 @@ export default defineConfig({
           target: 'es2015'
         }
       },
+      hotFile: 'public/hot',
       transformOnServe: (code, url) => code.replace('__PLACEHOLDER__', url)
     })
   ]
@@ -55,6 +56,7 @@ export default defineConfig({
 | `outputDirectory`  | `string`                                      | `'dist'`        | Directory where the bundle should be written               |
 | `tsCompiler`       | `'esbuild'` \| `'swc'`                        | `'esbuild'`     | @experimental TypeScript compiler to use                                 |
 | `swcOptions`       | `SwcOptions`                                  | `{}`            | @experimental Options to pass to the SWC compiler                        |
+| `hotFile`          | `string` \| `false`                           | `'public/hot'`  | Path to the "hot" file. Set to `false` to disable          |
 | `transformOnServe` | `(code: string, url: DevServerUrl) => string` | `code => code`  | Transform the code while serving                           |
 
 ### Example
@@ -72,6 +74,7 @@ export default {
       publicDirectory: 'static',
       buildDirectory: 'assets',
       outputDirectory: 'build',
+      hotFile: 'static/hot',
       transformOnServe: (code, url) => code.replace('__VITE_URL__', url)
     })
   ]
@@ -96,6 +99,7 @@ export interface VitePluginJavaConfig {
   outputDirectory?: string
   tsCompiler?: SupportedTSCompiler
   swcOptions?: SwcOptions
+  hotFile?: string | false
   transformOnServe?: (code: string, url: DevServerUrl) => string
 }
 

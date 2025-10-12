@@ -126,6 +126,10 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
           if (isAddressInfo(address)) {
             viteDevServerUrl = userConfig.server?.origin ? userConfig.server.origin as DevServerUrl : resolveDevServerUrl(address, server.config)
 
+            if (pluginConfig.hotFile) {
+              fs.writeFileSync(pluginConfig.hotFile, `${viteDevServerUrl}${server.config.base.replace(/\/$/, '')}`)
+            }
+
             setTimeout(() => {
               server.config.logger.info(`\n  ${colors.red(`${colors.bold('JAVA')} ${javaVersion(pluginConfig.javaProjectBase)}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
               server.config.logger.info('')
@@ -138,6 +142,13 @@ function resolveJavaPlugin(pluginConfig: Required<VitePluginJavaConfig>): [JavaP
         })
 
         if (!exitHandlersBound) {
+          const clean = () => {
+            if (pluginConfig.hotFile && fs.existsSync(pluginConfig.hotFile)) {
+              fs.rmSync(pluginConfig.hotFile)
+            }
+          }
+
+          process.on('exit', clean)
           process.on('SIGINT', () => process.exit())
           process.on('SIGTERM', () => process.exit())
           process.on('SIGHUP', () => process.exit())
@@ -203,6 +214,7 @@ function resolvePluginConfig(config: string | string[] | VitePluginJavaConfig): 
     publicDirectory: config.publicDirectory ?? 'public',
     outputDirectory: config.outputDirectory ?? 'dist',
     javaProjectBase: config.javaProjectBase ?? '.',
+    hotFile: config.hotFile === false ? false : (config.hotFile ?? path.join((config.publicDirectory ?? 'public'), 'hot')),
     transformOnServe: config.transformOnServe ?? (code => code),
   }
 }

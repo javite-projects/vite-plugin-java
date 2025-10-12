@@ -33,6 +33,15 @@ export interface VitePluginJavaConfig {
   javaProjectBase?: string
 
   /**
+   * The path to the "hot" file.
+   *
+   * Set to `false` to disable hot file generation.
+   *
+   * @default `${publicDirectory}/hot`
+   */
+  hotFile?: string | false
+
+  /**
    * Transform the code while serving.
    */
   transformOnServe?: (code: string, url: DevServerUrl) => string
