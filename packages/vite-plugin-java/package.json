@@ -26,7 +26,8 @@
     "build:dev-page": "node scripts/build-dev-page.js",
     "build:tsup": "tsup --format esm,cjs --clean --dts",
     "lint": "eslint .",
-    "test": "vitest"
+    "test": "vitest",
+    "prepublishOnly": "pnpm run build"
   },
   "peerDependencies": {
     "vite": "^5.0.0 || ^6.0.0"
